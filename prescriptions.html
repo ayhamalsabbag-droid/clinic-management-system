@@ -1,0 +1,446 @@
+[16/08/2026 12:45 ص] Ayham Alsabbagh: <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Prescription Management</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f2f5f9;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1100px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #777;
+            margin-bottom: 30px;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background: #2c3e50;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+        }
+
+        .prescription-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .prescription-form input,
+        .prescription-form select,
+        .prescription-form textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .prescription-form textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .prescription-form input:focus,
+        .prescription-form select:focus,
+        .prescription-form textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .add-button {
+            grid-column: 1 / -1;
+            padding: 13px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .add-button:hover {
+            background: #2980b9;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #3498db;
+            color: white;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .edit-button,
+        .delete-button {
+            padding: 7px 12px;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            margin: 2px;
+        }
+
+        .edit-button {
+            background: #f39c12;
+        }
+
+        .delete-button {
+            background: #e74c3c;
+        }
+
+        @media (max-width: 700px) {
+            .prescription-form {
+                grid-template-columns: 1fr;
+            }
+
+            .full-width,
+            .add-button {
+                grid-column: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <a href="dashboard.html" class="back-button">
+            Back to Dashboard
+        </a>
+
+        <h1>Prescription Management</h1>
+
+        <p class="subtitle">
+            Add, edit and delete prescription records
+        </p>
+
+        <form id="prescriptionForm" class="prescription-form">
+
+            <input
+                type="text"
+                id="patientName"
+                placeholder="Patient Name"
+                required
+            >
+[16/08/2026 12:45 ص] Ayham Alsabbagh: <input
+                type="text"
+                id="doctorName"
+                placeholder="Doctor Name"
+                required
+            >
+
+            <input
+                type="text"
+                id="medicineName"
+                placeholder="Medicine Name"
+                required
+            >
+
+            <input
+                type="text"
+                id="dosage"
+                placeholder="Dosage e.g. 500mg"
+                required
+            >
+
+            <input
+                type="text"
+                id="frequency"
+                placeholder="Frequency e.g. 2 times daily"
+                required
+            >
+
+            <input
+                type="date"
+                id="prescriptionDate"
+                required
+            >
+
+            <textarea
+                id="instructions"
+                class="full-width"
+                placeholder="Instructions"
+                required
+            ></textarea>
+
+            <button
+                type="submit"
+                class="add-button"
+                id="submitButton">
+                Add Prescription
+            </button>
+
+        </form>
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Patient</th>
+                        <th>Doctor</th>
+                        <th>Medicine</th>
+                        <th>Dosage</th>
+                        <th>Frequency</th>
+                        <th>Date</th>
+                        <th>Instructions</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody id="prescriptionTableBody"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        const prescriptionForm =
+            document.getElementById("prescriptionForm");
+
+        const patientName =
+            document.getElementById("patientName");
+
+        const doctorName =
+            document.getElementById("doctorName");
+
+        const medicineName =
+            document.getElementById("medicineName");
+
+        const dosage =
+            document.getElementById("dosage");
+
+        const frequency =
+            document.getElementById("frequency");
+
+        const prescriptionDate =
+            document.getElementById("prescriptionDate");
+
+        const instructions =
+            document.getElementById("instructions");
+
+        const prescriptionTableBody =
+            document.getElementById("prescriptionTableBody");
+
+        const submitButton =
+            document.getElementById("submitButton");
+
+        let prescriptions = [];
+
+        let editIndex = -1;
+
+
+        prescriptionForm.addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            const prescription = {
+
+                patient: patientName.value,
+
+                doctor: doctorName.value,
+
+                medicine: medicineName.value,
+
+                dosage: dosage.value,
+
+                frequency: frequency.value,
+
+                date: prescriptionDate.value,
+
+                instructions: instructions.value
+
+            };
+
+
+            if (editIndex === -1) {
+
+                prescriptions.push(prescription);
+
+            } else {
+
+                prescriptions[editIndex] = prescription;
+
+                editIndex = -1;
+
+                submitButton.textContent =
+                    "Add Prescription";
+            }
+
+
+            prescriptionForm.reset();
+
+            displayPrescriptions();
+
+        });
+
+
+        function displayPrescriptions() {
+
+            prescriptionTableBody.innerHTML = "";
+
+            prescriptions.forEach(function(prescription, index) {
+
+                const row =
+                    document.createElement("tr");
+
+                row.innerHTML = `
+
+                    <td>${index + 1}</td>
+
+                    <td>${prescription.patient}</td>
+
+                    <td>${prescription.doctor}</td>
+
+                    <td>${prescription.medicine}</td>
+[16/08/2026 12:45 ص] Ayham Alsabbagh: <td>${prescription.dosage}</td>
+
+                    <td>${prescription.frequency}</td>
+
+                    <td>${prescription.date}</td>
+
+                    <td>${prescription.instructions}</td>
+
+                    <td>
+
+                        <button
+                            class="edit-button"
+                            onclick="editPrescription(${index})">
+                            Edit
+                        </button>
+
+                        <button
+                            class="delete-button"
+                            onclick="deletePrescription(${index})">
+                            Delete
+                        </button>
+
+                    </td>
+
+                `;
+
+                prescriptionTableBody.appendChild(row);
+
+            });
+
+        }
+
+
+        function editPrescription(index) {
+
+            const prescription =
+                prescriptions[index];
+
+            patientName.value =
+                prescription.patient;
+
+            doctorName.value =
+                prescription.doctor;
+
+            medicineName.value =
+                prescription.medicine;
+
+            dosage.value =
+                prescription.dosage;
+
+            frequency.value =
+                prescription.frequency;
+
+            prescriptionDate.value =
+                prescription.date;
+
+            instructions.value =
+                prescription.instructions;
+
+            editIndex = index;
+
+            submitButton.textContent =
+                "Update Prescription";
+
+        }
+
+
+        function deletePrescription(index) {
+
+            const confirmed =
+                confirm(
+                    "Are you sure you want to delete this prescription?"
+                );
+
+            if (confirmed) {
+
+                prescriptions.splice(index, 1);
+
+                displayPrescriptions();
+
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>
